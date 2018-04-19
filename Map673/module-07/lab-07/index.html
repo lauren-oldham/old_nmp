@@ -1,0 +1,144 @@
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Map 673 Lesson 07 Template</title>
+
+    <link href="http://fonts.googleapis.com/css?family=Montserrat" rel="stylesheet" type="text/css">
+    <style>
+        body {
+            padding: 0;
+            margin: 0;
+            background: whitesmoke;
+            font-family: Montserrat, sans-serif;
+        }
+        .county {
+            stroke: white;
+        }
+        h1{
+            position: absolute;
+            left: 30px;
+            top: 10px;
+            font-size: 1.8em;
+            font-weight: 100;
+            color: #810f7c;
+            width: 12%;
+            background: #edf8fb;
+            border: 2px solid #810f7c;
+            border-radius: 3px; 
+            color: #810f7c;   
+            width: 160px;
+            height: 200px;
+            padding: 10px; 
+        }
+        h2 {
+            top: 150px;
+            left: 30px; 
+            font-size: 1em;
+            font-weight: 100;
+            color: #810f7c;
+            width: 12%; 
+            position: absolute;
+            padding: 10px; 
+        }
+         h3 {
+            bottom: 45px; 
+            left: 30px; 
+            font-size: .5em;
+            font-weight: 100;
+            color: #810f7c;
+            width: 12%; 
+            position: absolute;
+            padding: 10px; 
+        }
+        #map {
+            width: 900px;
+            height: 600px;
+            margin: 10px auto;
+            border: 1px solid #d3d3d3;
+        }
+        .land {
+            fill: #d3d3d3; 
+        }
+ 
+    </style>
+</head>
+<body>
+    
+    <div id ="map"></div>
+    <h1>US Cancer Mortality Rates</h1>
+    <h2>Deaths per 100,000 by County</h2>
+    <h3>Data were downloadded from the National Cancer Institute on 11-25-2015. The  data describe cancer rates for all cancer sites by mortality, for all races, sexes, and ages averaged over the years of 2008 - 2012. Map authored by Lauren Oldham, November 2015. </h3>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.5/d3.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/queue-async/1.0.7/queue.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/topojson/1.6.19/topojson.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/simple-statistics/0.9.0/simple_statistics.min.js"></script>
+
+
+    
+<script>
+    
+    var width = 900, height = 600;
+    
+    var svg = d3.select("#map")
+                .append("svg")
+                .attr("width", width)
+                .attr("height", height);
+    
+    var projection = d3.geo.albersUsa()
+                        .scale(1000)
+                        .translate([width/2, height/2]);
+    
+    var geoPath = d3.geo.path()
+                    .projection(projection); 
+    
+    queue()
+        .defer(d3.json, 'https://laurenoldham1202.cartodb.com/api/v2/sql?format=GeoJSON&q=SELECT * FROM cancer_deaths_by_county')
+        .defer(d3.json, 'na_land_clipped.json')
+        .await(makeMap);
+    
+    function makeMap(error, counties, na) {
+
+        var breaks = ss.jenks(counties.features.map(function(d){ 
+            return d.properties.cancer_rate_per_100_000
+        }), 5)
+        
+        breaks.shift();
+        breaks.pop();
+                
+        console.log(breaks);
+        
+        var colors = ["#edf8fb","#b3cde3","#8c96c6","#8856a7","#810f7c"];
+        
+        var jenks = d3.scale.threshold()
+            .domain(breaks)
+            .range(colors); 
+                
+        svg.append("g")
+            .selectAll("path")
+            .data(na.features)
+            .enter()
+            .append("path")
+            .attr("d", geoPath)
+            .attr("class", "land")
+        
+        svg.append("g")
+            .selectAll("path")
+            .data(counties.features)
+            .enter()
+            .append("path")
+            .attr("d", geoPath)
+            .attr("class", "county")
+            .attr("fill", function(d) {
+                return jenks(d.properties.cancer_rate_per_100_000);
+        });
+        
+        }
+    
+    
+    
+            
+ 
+</script>
+</body>
+</html>
