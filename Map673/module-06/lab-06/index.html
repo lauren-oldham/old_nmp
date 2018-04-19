@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>673 Module 06 CartoDB Starter Template</title>
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8"/>
+
+    <link rel="stylesheet" href="http://libs.cartocdn.com/cartodb.js/v3/3.15/themes/css/cartodb.css" />
+    
+    <style>
+        html, body, #map {
+            height: 100%;
+            padding: 0;
+            margin: 0;
+            background: #3d3d3d; 
+      }
+      h1 {
+            position: absolute; 
+            font-size: 2.3em; 
+            font-weight: 500;
+            color: whitesmoke; 
+            left: 45px;
+            top: 10px;
+            margin: 0;
+            padding: 8px 15px;
+            background: whitesmoke;
+            border: 2px solid #2171b5;
+            border-radius: 3px; 
+            color: #2171b5;
+          
+        }
+        #about {
+            position: absolute;
+            font-size: 1em; 
+            color: whitesmoke; 
+            left: 10px;
+            top: 80px;
+            padding: 8px 15px;
+            background: whitesmoke;
+            border: 2px solid #2171b5;
+            border-radius: 3px; 
+            color: #2171b5;   
+            width: 345px;
+            height: 400px;
+            overflow-y: scroll;
+        }
+        #metadata {
+            position: absolute;
+            font-size: .8em; 
+            color: whitesmoke; 
+            right: 10px;
+            bottom: 20px;
+            width: 35%;
+            padding: 4px 10px;
+            background: whitesmoke;
+            border: 2px solid #2171b5;
+            border-radius: 3px; 
+            color: #2171b5;   
+            width: 400px;
+        }
+    </style>
+</head>
+<body>
+    
+    <div id="map"><div id="legend"></div></div>
+        <h1>Famous Kentuckians</h1>
+    <div id="about">  
+        <p>This map shows just a few things that make Kentucky kick ass*: famous Kentuckians.
+
+            <p>Concerning famous Kentuckians, we included all notable people who were born and/or lived in Kentucky. Notable enough to have their own Wikipedia page, at least! Some were born here and moved on to different states early in their lives (Abe Lincoln); some simply attended high school here (hello Tom Cruise!). Some bleed blue loudly and proudly (Ashley Judd), while others hang around seasonally for the horses (paging William Shatner!). We are home to two-thirds of the main cast of The Hunger Games (you're welcome, Lionsgate). From actors and musicians to world-renowned scientists and athletes, Kentucky has been home to many talented and brilliant folks!</p>
+
+            <p>HOW TO READ THE MAP: Depending on the layers you have enabled, each county displays the number of notable persons per 100,000 people. As you click on each county, a black window will show you the county name, count, and count per 100,000 people. As you zoom into the map, individual markers will display each notable person or tourist attraction; hovering over each marker will display a white info window. For cities home to more than one notable person, points were drawn concentrically around the city center. *Slogan borrowed from Kentucky for Kentucky campaign. Find out more at kentuckyforkentucky.com. I have no affiliation with KY4KY...aside from constantly browsing their online shop. Map used for non-commercial, academic purposes only.
+            </p>
+    </div>
+    <div id="metadata">
+        <p>Map Authored by Lauren Oldham for Map-671.Sources: Wikipedia (list of famous persons/KY places); United States Census Bureau American Fact Finder (population); Census TIGER (county shapefile); TripAdvisor (tourist attractions) CRS: NAD83/Kentucky South (EPSG:2247)
+    </div>
+
+    <script src="http://libs.cartocdn.com/cartodb.js/v3/3.15/cartodb.js"></script>
+    
+    <script type ="cartocss/html" id="markers-styles">
+        #famous_kentuckians_shp {
+           marker-fill-opacity: 0.9;
+           marker-line-color: #41006D;
+           marker-line-width: .5;
+           marker-line-opacity: 1;
+           marker-placement: point;
+           marker-type: ellipse;
+           marker-width: 10;
+           marker-allow-overlap: true;
+          [zoom < 6] {
+            marker-fill-opacity: 0;
+            marker-line-opacity: 0;
+          }
+        }
+
+        #famous_kentuckians_shp[fame="Author/Journalist"] {
+           marker-fill: #fdbf6f;
+        }
+        #famous_kentuckians_shp[fame="Film/Television"] {
+           marker-fill: #ff7f00;
+        }
+        #famous_kentuckians_shp[fame="Military"] {
+           marker-fill: #B2DF8A;
+        }
+        #famous_kentuckians_shp[fame="Musician"] {
+           marker-fill: #33A02C;
+        }
+        #famous_kentuckians_shp[fame="Pageant"] {
+           marker-fill: #FB9A99;
+        }
+        #famous_kentuckians_shp[fame="Politics"] {
+           marker-fill: #E31A1C;
+        }
+        #famous_kentuckians_shp[fame="Religion"] {
+           marker-fill: #a6cee3;
+        }
+        #famous_kentuckians_shp[fame="Scientist"] {
+           marker-fill: #1f78b4;
+        }
+        #famous_kentuckians_shp[fame="Sports"] {
+           marker-fill: #CAB2D6;
+        }
+        #famous_kentuckians_shp[fame="Visual Artist"] {
+           marker-fill: #6A3D9A;
+        }
+        #famous_kentuckians_shp {
+           marker-fill: #ffff99;
+        }
+    </script>
+    
+    <script>
+        
+        var map = L.map('map', {
+            center: [37.8393, -87.2700],
+            zoom: 7.4
+        });        
+
+        
+        var countyCartoCSS = '#ky_count_pop_join_1{'+
+              'polygon-fill: #eff3ff;'+
+              'polygon-opacity: 1;'+
+              'line-color: #D7D8D9;'+
+              'line-width: 0.5;'+
+              'line-opacity: 1;'+
+            '}'+
+            '#ky_count_pop_join_1 [ ppl_norm <= 35.689] {'+
+               'polygon-fill: #084594;'+
+            '}'+
+            '#ky_count_pop_join_1 [ ppl_norm <= 20] {'+
+               'polygon-fill: #2171b5;'+
+            '}'+
+            '#ky_count_pop_join_1 [ ppl_norm <= 15] {'+
+               'polygon-fill: #4292c6;'+
+            '}'+
+            '#ky_count_pop_join_1 [ ppl_norm <= 10] {'+
+               'polygon-fill: #6baed6;'+
+            '}'+
+            '#ky_count_pop_join_1 [ ppl_norm <= 5] {'+
+               'polygon-fill: #9ecae1;'+
+            '}'+
+            '#ky_count_pop_join_1 [ ppl_norm <= 3] {'+
+               'polygon-fill: #c6dbef;'+
+            '}'+
+            '#ky_count_pop_join_1 [ ppl_norm <= 0] {'+
+               'polygon-fill: #eff3ff;'+
+            '}';
+        
+       
+        
+        var sourceObject = {
+            user_name: 'laurenoldham1202', 
+            type: 'cartodb', 
+            sublayers: [
+                {
+                    sql: "SELECT * FROM ky_count_pop_join_1", 
+                    cartocss: countyCartoCSS
+                }, 
+                {
+                    sql: "SELECT * FROM famous_kentuckians_shp", 
+                    cartocss: $("#markers-styles").text()
+                }
+            ]
+        };
+        
+        cartodb.createLayer(map, sourceObject, {
+            title: true, 
+            description: true,
+            cartodb_logo: true, 
+            layer_selector: true
+        }).addTo(map)
+        .on('done', function(l) {
+            
+            var legendData = [
+                { name: 'Author/Journalist',  value: '#fdbf6f' },
+                { name: 'Film/Television',  value: '#ff7f00' },
+                { name: 'Military',  value: '#B2DF8A' },
+                { name: 'Musician',  value: '#33A02C' },
+                { name: 'Pageant',  value: '#FB9A99' },
+                { name: 'Politics',  value: '#E31A1C' },
+                { name: 'Religion',  value: '#a6cee3' },
+                { name: 'Scientist',  value: '#1f78b4' },
+                { name: 'Sports',  value: '#CAB2D6' },
+                { name: 'Visual Artist',  value: '#6A3D9A' },
+                
+            ];
+            
+              // Adds the custom legend
+            var customLegend = new cdb.geo.ui.Legend.Custom({
+              title: "famous folks in KY",
+              data: legendData
+            });
+
+            // append the rendered legend to the legend div
+            $('#legend').append(customLegend.render().$el);
+        });
+        
+        
+       
+    </script>
+</body>
+</html>
