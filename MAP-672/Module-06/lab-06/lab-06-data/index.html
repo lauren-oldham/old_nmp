@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset=utf-8 />
+    <title>Lab 06 Starter Template</title>
+    <meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
+
+    <script src="http://cdn.leafletjs.com/leaflet/v0.7.7/leaflet.js"></script>
+
+    <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet/v0.7.7/leaflet.css" />
+    <link href='http://fonts.googleapis.com/css?family=Lato' rel='stylesheet' type='text/css'>
+
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background: whitesmoke;
+            font-family: Lato, sans-serif;
+            color: #0D0000;
+        }
+        header {
+            padding: 6px 10%;
+        }
+        h1 {
+            display: inline-block;
+            margin-right: 20px;
+            color: #001323;
+        }
+        h2 {
+            display: inline-block;
+            color: #001323;
+        }
+        #map {
+            width: 80%;
+            height: 540px;
+            margin: 10px auto;
+        }
+        footer {
+            padding: 6px 10%;
+            width: 80%;
+        }
+        p {
+            font-size: 1em;
+            color: #001323;
+        }
+        .kentucky-blue {
+            color: #165bb6;
+        }
+        .purple {
+            color: #8500A6;
+        }
+        .green {
+            color: #00A619;
+        }
+        
+    </style>
+</head>
+
+<body>
+    <header>
+        <h1>City Populations</h1>
+        <h2>for Indianapolis, Cincinnati, and Louisville</h2>
+    </header>
+
+    <div id='map'></div>
+
+    <footer>
+        <p>Map authored by Lauren Oldham.</p>
+        <p>Map tiles from Leaflet/OpenStreetMap. Population data from Google.</p>
+        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis urna magna, maximus nec laoreet sit amet, dictum ultricies nibh. Ut id auctor lacus. Nam a dolor et justo luctus luctus. Duis a elit eget risus dictum vehicula id eu elit. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Sed sed enim nisl. Vestibulum commodo imperdiet lacus, sed facilisis erat placerat sit amet. Nulla consequat malesuada neque eget aliquet. Integer non convallis nisl, gravida ultrices ex. Fusce nec vestibulum elit. Sed elementum lectus ipsum, vulputate elementum ex laoreet a. Aenean eu ex varius, varius felis vitae, efficitur nulla. Quisque pretium laoreet ante, in sodales dui vehicula at. Mauris eu sem sapien.
+        </p>
+    </footer>
+
+    <script>
+
+        var map = L.map('map', {
+            center: [39.206220,-85.526541],
+            zoom: 8,
+        });
+       
+        var tiles = L.tileLayer('http://{s}.tiles.wmflabs.org/bw-mapnik/{z}/{x}/{y}.png', {
+        maxZoom: 18,
+        attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+    });
+        map.addLayer(tiles);
+        
+        // Begin writing/modifying code for Lab 06 here
+        
+        var cities = [
+             {
+                 name: "Louisville",
+                 properties: {
+                     coordinates: [38.25, -85.7667],
+                     population: 756832,
+                     state: "KY"
+                 }   
+             }, 
+            
+            {
+                name: "Indianapolis", 
+                properties: {
+                    coordinates: [39.7910, -86.1480], 
+                    population: 852866, 
+                    state: "IN"
+                }
+            }, 
+            
+            {
+                name: "Cincinnati", 
+                properties: {
+                    coordinates: [39.1000, -84.5167], 
+                    population: 297517,
+                    state: "OH"
+                }
+            }
+        ];
+        
+        for (var i = 0; i < cities.length; i++) {
+                        
+            var props = cities[i].properties; 
+            
+            var popup =  buildPopup(cities[i].name, props.population, props.state); 
+
+                
+            L.marker(props.coordinates).addTo(map)
+                .bindPopup(popup);
+            
+            // console.log(cities[i]. properties);
+            console.log(props);
+            
+        }; 
+        
+        function buildPopup(name, pop, state) {
+            
+            if(state == "KY") {
+                var colorClass = "kentucky-blue";
+            
+            } else if(state == "IN") {
+                var colorClass = "purple";
+            
+            } else {
+                var colorClass = "green";
+            }
+            
+            return  "<div class='"+colorClass+"'><b>"+name+"</b><br>"+
+                        "<b>Population</b>: "+pop.toLocaleString()+"<div>";     
+        }
+            
+        
+          
+    </script>
+    
+</body>
+
+</html>
