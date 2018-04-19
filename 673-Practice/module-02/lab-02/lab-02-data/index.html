@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset=utf-8 />
+    <title>Lab 02 Starter</title>
+    <meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
+    
+    <script src="https://code.jquery.com/jquery-1.12.2.min.js"></script>
+    <script src="http://cdn.leafletjs.com/leaflet/v0.7.7/leaflet.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/simple-statistics/1.0.1/simple_statistics.js"></script>
+    
+
+    <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet/v0.7.7/leaflet.css" />
+    <link href='http://fonts.googleapis.com/css?family=Lato' rel='stylesheet' type='text/css'>
+    
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background: whitesmoke;
+            font-family: Lato, sans-serif;
+            color: #0D0000;
+        }
+        header {
+            width: 80%;
+            margin: 10px auto 10px auto;
+        }
+        h1 {
+            display: inline-block;
+            margin-right: 20px;
+            color: #001323;
+        }
+        h2 {
+            display: inline-block;
+            color: #001323;
+        }
+        #map {
+            width: 80%;
+            height: 540px;
+            margin: 10px 10%;
+            background: whitesmoke;
+            border: 2px solid #dddedf;
+        }
+        footer {
+            padding: 6px 10%;
+            width: 80%;
+        }
+        p {
+            font-size: 1em;
+            color: #001323;
+        }
+        .legend {
+            padding: 6px 8px;
+            font-size: 1em;
+            background: rgba(255,255,255,0.8);
+            box-shadow: 0 0 15px rgba(0,0,0,0.2);
+            border-radius: 5px;
+        }
+        .legend h3 {
+            font-size: 1.1em;
+            font-weight: normal;
+            color: #001323;
+            margin: 0 0 10px 0;
+        }
+        .legend span {
+            width: 20px;
+            height: 20px;
+            float: left;
+            margin: 0 10px 4px 0;
+        }
+        .legend label {
+            font-size: 1.1em;
+        }
+        .legend label:after {
+            content: '';
+            display: block;
+            clear: both;
+        }
+        .leaflet-popup-content {
+            max-width: 160px;   
+        }
+        
+    </style>
+</head>
+
+<body>
+    <header>
+        <h1>Map Title</h1>
+        <h2>Map Subtitle</h2>
+    </header>
+
+    <div id='map'></div>
+
+    <footer>
+        <p>Map authored by YOUR NAME</p>
+        <p>Additional information about the data and map goes here.</p>
+        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis urna magna, maximus nec laoreet sit amet, dictum ultricies nibh. Ut id auctor lacus. Nam a dolor et justo luctus luctus. Duis a elit eget risus dictum vehicula id eu elit. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Sed sed enim nisl. Vestibulum commodo imperdiet lacus, sed facilisis erat placerat sit amet. Nulla consequat malesuada neque eget aliquet. Integer non convallis nisl, gravida ultrices ex. Fusce nec vestibulum elit. Sed elementum lectus ipsum, vulputate elementum ex laoreet a. Aenean eu ex varius, varius felis vitae, efficitur nulla. Quisque pretium laoreet ante, in sodales dui vehicula at. Mauris eu sem sapien.
+        </p>
+    </footer>
+    
+    <div id ='ui-controls'>
+        <label><span class="min">January</span>
+            <span class="max">December</span></label>
+        <input type = 'range' min = '1' max = '12' value = '1', step = '1' class = 'year-slider'> 
+    </div>
+
+    
+    <script src="arm.geojson"></script>
+    <script src="bol.geojson"></script>
+    <script src="ecu.geojson"></script>
+    <script src="eth.geojson"></script>
+    <script src="geo.geojson"></script>
+    <script src="hnd.geojson"></script>
+    <script src="ind.geojson"></script>
+    <script src="ken.geojson"></script>
+    <script src="kgz.geojson"></script>
+    <script src="khm.geojson"></script>
+    <script src="lka.geojson"></script>
+    <script src="mli.geojson"></script>
+    <script src="mmr.geojson"></script>
+    <script src="mng.geojson"></script>
+    <script src="mwi.geojson"></script>
+    <script src="nga.geojson"></script>
+    <script src="per.geojson"></script>
+    <script src="pry.geojson"></script>
+    <script src="phl.geojson"></script>
+    <script src="tjk.geojson"></script>
+    <script src="tza.geojson"></script>
+    <script src="rwa.geojson"></script>
+    <script src="uga.geojson"></script>
+    <script src="zmb.geojson"></script>
+
+    
+    
+    <script>
+        
+        var options = {
+            center: [40.0691, 45.0382],
+            zoom: 2,
+            zoomControl: false
+        }
+        var map = L.map('map', options);
+        
+        map.addControl( L.control.zoom({ position: 'topright' }));
+        
+        
+        
+        var ctry = new L.featureGroup();
+        L.geoJson(arm).addTo(ctry);
+        L.geoJson(bol).addTo(ctry);
+        L.geoJson(ecu).addTo(ctry);
+        L.geoJson(eth).addTo(ctry);
+        L.geoJson(geo).addTo(ctry);
+        L.geoJson(hnd).addTo(ctry);
+        L.geoJson(ind).addTo(ctry);
+        L.geoJson(ken).addTo(ctry);
+        L.geoJson(kgz).addTo(ctry);
+        L.geoJson(lka).addTo(ctry);
+        L.geoJson(mli).addTo(ctry);
+        L.geoJson(mwi).addTo(ctry);
+        L.geoJson(mmr).addTo(ctry);
+        L.geoJson(mng).addTo(ctry);
+        L.geoJson(nga).addTo(ctry);
+        L.geoJson(per).addTo(ctry);
+        L.geoJson(pry).addTo(ctry);
+        L.geoJson(phl).addTo(ctry);
+        L.geoJson(rwa).addTo(ctry);
+        L.geoJson(tjk).addTo(ctry);
+        L.geoJson(tza).addTo(ctry);
+        L.geoJson(uga).addTo(ctry);
+        L.geoJson(zmb).addTo(ctry);
+        L.geoJson(khm).addTo(ctry);
+        
+        ctry.addTo(map);
+        
+//        var bounds = ctry.getBounds();
+//        console.log(bounds);
+        
+        var b = map.fitBounds(ctry.getBounds());
+        console.log(b);
+        
+        
+        
+        
+        var dataLayer,
+            attribute = "Armenia";
+        
+        var dataLayerTwo, 
+            attributeTwo = "1";
+        
+        $.getJSON("rocktest.json", function(regions) {
+            
+            //console.log(regions);
+            
+            dataLayer = L.geoJson(regions, {
+                 style: function(feature) {
+                    return {
+                            color: '#dddddd',
+                            weight: 2,
+                            fillOpacity: 1,
+                            fillColor: '#1f78b4'
+                        };
+                }          
+            }).addTo(map);
+            
+            drawMap(regions);
+            
+            drawInfo();
+              
+        });
+        
+        
+    
+    
+
+        
+        
+        
+        function drawMap(regions) { //define function
+            
+            dataLayerTwo = L.geoJson(regions, {
+                
+                style: function(feature){
+                    return {
+                        color: 'black', 
+                        weight: 1, 
+                        fillOpacity: 1,
+                        fillColor: '#1f78b4'
+                    }
+                }
+                
+            }).addTo(map);
+            
+            var breaks = getClassBreaks();
+            
+            drawLegend(breaks); //call legend first
+                        
+            updateMap(breaks); //call to update map
+            
+            createSliderUI(breaks); 
+                                
+        }
+        
+        
+        
+        function updateMap(breaks) { //define update map function
+            
+            var monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+            
+            dataLayerTwo.eachLayer(function(layer) {
+                layer.setStyle( { //set the style for each layer after looping through 
+                    fillColor: getColor(Number(layer.feature.properties[attributeTwo]), breaks)
+                });
+            
+            layer.bindPopup("<b><h5>"+String(layer.feature.properties["admin_name"])+" Region</h5>" + monthNames[Number(attribute)-1] + "</b>: " + layer.feature.properties[attributeTwo].toLocaleString()); //create popup to define each county, the year of interest, and its corresponding unemployment rate    
+                
+                layer.on('mouseover', function() { // create mouseover event
+                    
+                    layer.setStyle({
+                       color: "#E600FF",
+                        weight: 3, 
+                        opacity: .9, 
+                        stroke: true
+                    }); // set affordance stroke color to yellow when hovered over
+                    
+                    $('.info').show(); // shows the right hand display window when moused over
+                    updateInfo(layer, breaks);  // sends layer info to updateInfo function
+                    layer.bringToFront();
+                    
+                });
+                
+                 layer.on('mouseout', function() {
+                    
+                    layer.setStyle({
+                       color: "black", 
+                        weight: 1
+                    }); // set stroke color back to grey when not hovered over
+                   
+                   $('.info').hide(); //  hides info window when not moused over
+                    
+                });
+                
+            }); 
+            
+            //drawLegend(breaks); //call legend first
+
+        }
+        
+        
+        
+        function getClassBreaks() {
+            
+            var values = [];
+            
+            // for all the attribute columns
+            for(var i = 1; i <= 12; i++) {
+                
+                dataLayerTwo.eachLayer(function(layer) {
+                var value = Number(layer.feature.properties[i]);
+                values.push(value);
+                //console.log(value);
+                });
+            }
+  
+            var breaks = ss.quantile(values, [0, .2, 0.4, 0.6, 0.8, 1]);
+              
+            //var breaks = [0, 0.06, 0.12, 0.18, 0.24, 0.3]
+            
+            return breaks;
+                        
+        }
+        
+        
+        
+        
+        
+        function getColor(d, breaks) {
+            if(d <= breaks[1]) {
+                return '#fef0d9';
+            } else if(d <= breaks[2]) {
+                return '#fdcc8a';
+            } else if(d <= breaks[3]) {
+                return '#fc8d59'; 
+            } else if(d <= breaks[4]) {
+                return '#e34a33'; 
+            } else if(d <= breaks[5]) {
+                return '#b30000'
+            } 
+        }
+        
+        
+        
+        
+        
+        function drawLegend(breaks) {
+            
+            var monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+            
+            var legend = L.control({position: 'topright'});
+
+            legend.onAdd = function(map) {
+                
+                var div = L.DomUtil.create('div', 'legend');
+               
+                return div; // return empty div element
+                      
+            };
+
+            legend.addTo(map);
+
+                  
+            var legend = $('.legend').html("<h3>Drought Exposure: " + monthNames[Number(attributeTwo)-1] + "</h3><ul>"); 
+            
+            for (var i = 0; i < breaks.length-1; i++) {
+            
+                var color = getColor(breaks[i + 1], breaks);
+                $('.legend ul').append(
+                    '<li><span style="background:' + color +  '"></span> ' +
+                     breaks[i].toLocaleString() + ' &mdash; ' + 
+                     breaks[i + 1].toLocaleString() + '</li>');
+            }    
+            legend.append("</ul>");
+            
+        }
+        
+        
+        
+        
+        
+        function createSliderUI(breaks) {
+            
+            // create a Leaflet control object and store a reference to it in a variable
+            var sliderControl = L.control({ position: 'bottomleft'} );
+
+            // when we add this control object to the map
+            sliderControl.onAdd = function(map) {
+
+                // select an existing DOM element with an id of "ui-controls"
+                var slider = L.DomUtil.get("ui-controls");
+
+                    // when the user clicks on the slider element
+                    L.DomEvent.addListener(slider, 'mousedown', function(e) { 
+
+                        // prevent the click event from bubbling up to the map
+                        L.DomEvent.stopPropagation(e); 
+
+                    });
+
+                // return the slider from the onAdd method
+                return slider;
+            }
+
+            // add the control object containing our slider element to the map
+            sliderControl.addTo(map); 
+            
+             var monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+            
+            $('.year-slider')
+                .on('input change', function () {
+                   attributeTwo = $(this).val();
+                   updateMap(breaks);
+                $('.legend h3').html('Drought Exposure: <br>'+ monthNames[attributeTwo-1])
+            }); 
+            
+        }
+        
+        
+        
+        
+        
+        function drawInfo() { //declare drawinfo function
+            
+            var info = L.control( {position: 'bottomright'} ); // define variable that uses leaflet controls to position the new info window in the bottom right 
+            
+            info.onAdd = function(map) {
+                
+                var div = L.DomUtil.create('div', 'info'); // create new div element of class info
+                
+                return div; 
+            }
+            
+            info.addTo(map); 
+            
+            $('.info').hide(); // use hide method so that the right hand info window is not displayed when you're not hovering over a county
+            
+        }
+        
+        
+        
+        
+        
+        function updateInfo(layer, breaks) { //define updateInfo function
+            
+            var props = layer.feature.properties;  
+            
+            var html = "<h3>"+props["admin_name"]+" Region</h3>";
+            
+            var monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+            
+            for(var i = 1; i <= 12; i++) {
+                
+                var monthVal = Number(props[String(i)]);
+                
+                html += "<b>" + 
+                    "<span style='color: " + getColor(monthVal, breaks) +
+                    "'>" + monthNames[i-1] + 
+                    "</b>" + ": " + monthVal.toLocaleString() + "<br>";
+                
+            }
+
+            $(".info").html(html); // selecting something with class of info, use html method to select html string for each county we're mousing over
+        }
+
+    </script>
+    
+</body>
+
+</html>
